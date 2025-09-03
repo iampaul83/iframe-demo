@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Record Form</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    label { display: block; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <h1 id="form-title"></h1>
+  <form id="recordForm">
+    <label id="idLabel">
+      ID: <input type="text" id="id" name="id" readonly />
+    </label>
+    <label>
+      Name: <input type="text" id="name" name="name" required />
+    </label>
+    <button type="submit">Save</button>
+  </form>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const idInput = document.getElementById('id');
+    const nameInput = document.getElementById('name');
+    const idLabel = document.getElementById('idLabel');
+    const title = document.getElementById('form-title');
+    let mode = 'add';
+    if (params.has('id')) {
+      mode = 'edit';
+      idInput.value = params.get('id');
+      nameInput.value = params.get('name') || '';
+      title.textContent = 'Edit Record';
+    } else {
+      idLabel.style.display = 'none';
+      title.textContent = 'Add Record';
+    }
+    document.getElementById('recordForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const record = { id: idInput.value, name: nameInput.value };
+      window.parent.postMessage({ type: 'saveRecord', mode, record }, '*');
+      const url = window.location.pathname + window.location.search;
+      window.parent.closeTab(url);
+    });
+  </script>
+</body>
+</html>

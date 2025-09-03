@@ -7,6 +7,8 @@
     body { font-family: Arial, sans-serif; padding: 20px; }
     label { display: block; margin-bottom: 8px; }
     #result { margin-top: 20px; }
+    table { border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 4px 8px; }
   </style>
 </head>
 <body>
@@ -19,6 +21,13 @@
     <button type="submit">Search</button>
   </form>
   <div id="result"></div>
+  <button id="add">Add</button>
+  <table id="results">
+    <thead>
+      <tr><th>ID</th><th>Name</th><th>Actions</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
   <script>
     const params = new URLSearchParams(window.location.search);
     const q = params.get('q') || '';
@@ -27,6 +36,55 @@
     if (q) {
       resultDiv.textContent = `Showing results for "${q}"`;
     }
+
+    const data = Array.from({ length: 10 }, (_, i) => ({ id: i + 1, name: `Item ${i + 1}` }));
+    const tbody = document.querySelector('#results tbody');
+
+    function renderTable() {
+      tbody.innerHTML = '';
+      data.forEach(record => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${record.id}</td><td>${record.name}</td>` +
+          `<td><button class="edit" data-id="${record.id}">Edit</button>` +
+          `<button class="delete" data-id="${record.id}">Delete</button></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+    renderTable();
+
+    document.getElementById('add').addEventListener('click', () => {
+      window.parent.openTab('form.html', 'Add Record');
+    });
+
+    document.getElementById('results').addEventListener('click', e => {
+      if (e.target.classList.contains('edit')) {
+        const id = e.target.dataset.id;
+        const record = data.find(r => r.id == id);
+        window.parent.openTab(`form.html?id=${record.id}&name=${encodeURIComponent(record.name)}`, 'Edit Record');
+      }
+      if (e.target.classList.contains('delete')) {
+        const id = e.target.dataset.id;
+        const index = data.findIndex(r => r.id == id);
+        if (index > -1) {
+          data.splice(index, 1);
+          renderTable();
+        }
+      }
+    });
+
+    window.addEventListener('message', e => {
+      if (e.data && e.data.type === 'saveRecord') {
+        const { mode, record } = e.data;
+        if (mode === 'add') {
+          record.id = data.length ? Math.max(...data.map(r => r.id)) + 1 : 1;
+          data.push(record);
+        } else if (mode === 'edit') {
+          const idx = data.findIndex(r => r.id == record.id);
+          if (idx > -1) data[idx] = record;
+        }
+        renderTable();
+      }
+    });
   </script>
 </body>
 </html>
