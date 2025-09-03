@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Search Results</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    label { display: block; margin-bottom: 8px; }
+    #result { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Search Results</h1>
+  <form method="GET" action="search-results.html">
+    <label>
+      Query:
+      <input type="text" name="q" id="query" />
+    </label>
+    <button type="submit">Search</button>
+  </form>
+  <div id="result"></div>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get('q') || '';
+    document.getElementById('query').value = q;
+    const resultDiv = document.getElementById('result');
+    if (q) {
+      resultDiv.textContent = `Showing results for "${q}"`;
+    }
+  </script>
+</body>
+</html>
