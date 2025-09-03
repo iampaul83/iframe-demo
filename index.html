@@ -101,8 +101,7 @@
     // Forward messages between iframes
     window.addEventListener('message', e => {
       if (e.data && e.data.type === 'saveRecord') {
-        const searchFrame = Array.from(document.querySelectorAll('#iframe-container iframe'))
-          .find(f => f.src.includes('search-results.html'));
+        const searchFrame = document.querySelector('#iframe-container iframe[data-url^="search-results.html"]');
         if (searchFrame && searchFrame.contentWindow) {
           searchFrame.contentWindow.postMessage(e.data, '*');
           switchTab(searchFrame.dataset.url);
