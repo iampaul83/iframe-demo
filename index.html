@@ -89,6 +89,20 @@
       const lastTab = tabsDiv.querySelector('.tab:last-child');
       if (lastTab) switchTab(lastTab.dataset.url);
     }
+
+    // Expose functions for child iframes
+    window.openTab = openTab;
+    window.closeTab = closeTab;
+
+    // Forward messages between iframes
+    window.addEventListener('message', e => {
+      if (e.data && e.data.type === 'saveRecord') {
+        const searchFrame = document.querySelector('#iframe-container iframe[data-url^="search-results.html"]');
+        if (searchFrame && searchFrame.contentWindow) {
+          searchFrame.contentWindow.postMessage(e.data, '*');
+        }
+      }
+    });
   </script>
 </body>
 </html>
