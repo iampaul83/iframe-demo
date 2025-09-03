@@ -56,6 +56,14 @@
       const iframe = document.createElement('iframe');
       iframe.src = url;
       iframe.dataset.url = url;
+      iframe.addEventListener('load', () => {
+        try {
+          const path = iframe.contentWindow.location.pathname.split('/').pop();
+          iframe.dataset.url = path + iframe.contentWindow.location.search;
+        } catch (e) {
+          // Ignore cross-origin frames
+        }
+      });
       iframeContainer.appendChild(iframe);
 
       switchTab(url);
