@@ -39,7 +39,8 @@
       e.preventDefault();
       const record = { id: idInput.value, name: nameInput.value };
       window.parent.postMessage({ type: 'saveRecord', mode, record }, '*');
-      const url = window.location.pathname + window.location.search;
+      const path = window.location.pathname.split('/').pop();
+      const url = path + window.location.search;
       window.parent.closeTab(url);
     });
   </script>
