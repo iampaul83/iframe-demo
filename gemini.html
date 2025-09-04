@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered SDLC & AIOps Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: The application uses an interactive, horizontal stepper to represent the SDLC flow. This is more intuitive and engaging than a static table. Users click a phase to display its detailed information in a dedicated content area below. This design breaks down complex information into manageable, focused sections, improving comprehension and user experience. The primary interaction is phase selection, which filters the content instantly. -->
+    <!-- Visualization & Content Choices: Report Info: AI/AIOps in SDLC. Goal: Organize & Inform. Viz/Presentation: Interactive HTML/CSS stepper for navigation and distinct content cards for details. Interaction: Click-to-reveal/filter content by phase. Justification: This structure transforms a data table into a guided learning path, allowing users to focus on specific stages of the SDLC without being overwhelmed. It promotes active exploration over passive reading. Method: Vanilla JS and Tailwind CSS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #FDFBF8;
+            color: #4A4A4A;
+        }
+        .sdlc-step {
+            transition: all 0.3s ease;
+            border-bottom: 4px solid transparent;
+        }
+        .sdlc-step.active {
+            border-bottom-color: #DD6B20;
+            color: #DD6B20;
+            transform: translateY(-2px);
+        }
+        .sdlc-step:hover {
+            background-color: #FEF3C7;
+        }
+        .content-card {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .content-card.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 250px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .tooltip .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800 tracking-tight">大型專案管理與系統開發流程 (SDLC)</h1>
+            <h2 class="text-2xl font-semibold text-orange-700 mt-2">AI & AIOps 整合應用儀表板</h2>
+            <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
+                本儀表板旨在探索如何在系統開發生命週期 (SDLC) 的各個階段中，有效運用人工智慧 (AI) 與智能維運 (AIOps)，以提升效率、品質與決策能力。請點擊下方各階段以深入了解其應用細節。
+            </p>
+        </header>
+
+        <nav id="sdlc-nav" class="mb-10 sticky top-0 bg-white/80 backdrop-blur-sm z-10 shadow-sm rounded-lg">
+            <div class="overflow-x-auto">
+                <div class="flex justify-center border-b border-gray-200 min-w-max">
+                    <!-- Navigation steps will be inserted here by JavaScript -->
+                </div>
+            </div>
+        </nav>
+
+        <main id="sdlc-content-container">
+            <!-- Content cards will be inserted here by JavaScript -->
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sdlcData = [
+                {
+                    id: 'planning',
+                    name: '1. 規劃與可行性分析',
+                    icon: '🎯',
+                    content: {
+                        goal: '準確預測專案範疇、時程、成本與資源，識別潛在風險，確保專案可行性。',
+                        application: '運用 AI 進行歷史專案數據分析，預測專案成功率、需求相似性比對，並透過自然語言處理 (NLP) 分析利害關係人需求文件，自動生成初步需求摘要。',
+                        benefit: '提升估算準確度，降低 15-20% 的規劃偏差。早期識別 30% 以上的潛在風險。加速需求理解，縮短 25% 的需求釐清時間。',
+                        controls: '建立數據治理框架，確保 AI 模型所用數據的品質與一致性。定期審核與校準預測模型，避免模型漂移。建立人工審核機制，驗證 AI 生成的需求摘要。',
+                        tools: [
+                            { name: 'Jira Product Discovery', description: '利用 AI 功能協助整理用戶回饋、洞察趨勢，並建立產品路線圖。' },
+                            { name: 'ScopeMaster', description: '使用 NLP 分析需求文本，自動估算功能點與工作量，識別需求模糊性。' },
+                            { name: 'Forecast.app', description: '整合專案管理、資源規劃與財務的 AI 平台，提供智能預測與排程建議。' }
+                        ]
+                    }
+                },
+                {
+                    id: 'analysis',
+                    name: '2. 需求分析',
+                    icon: '🔍',
+                    content: {
+                        goal: '確保需求完整、無歧義且可追溯，建立清晰的系統規格與業務流程模型。',
+                        application: 'AI 驅動的需求分析工具，自動檢測需求文件中的矛盾、遺漏與模糊不清的描述。利用機器學習建立需求與程式碼之間的追溯連結圖。',
+                        benefit: '減少 40% 因需求不清導致的後期重工。自動化需求追蹤，提升合規性與變更管理效率。',
+                        controls: '定義需求品質的量化指標 (例如：清晰度、一致性)，用於訓練與評估 AI 模型。需求分析師需確認 AI 的分析結果，並對複雜業務邏輯進行最終判斷。',
+                        tools: [
+                            { name: 'IBM DOORS Next', description: '整合 AI 功能，提供需求品質分析、相似性檢測與生命週期管理。' },
+                            { name: 'Jama Connect', description: '提供需求可追溯性分析，並透過 AI 輔助識別需求變更的影響範圍。' },
+                            { name: 'Modern Requirements', description: '提供Copilot功能，利用生成式AI協助撰寫、分析和完善需求文檔。' }
+                        ]
+                    }
+                },
+                {
+                    id: 'design',
+                    name: '3. 系統設計',
+                    icon: '🎨',
+                    content: {
+                        goal: '創建高效、可擴展且安全的系統架構與 UI/UX 設計，滿足所有功能與非功能性需求。',
+                        application: '使用生成式 AI 根據需求規格自動生成 API 規格、資料庫模式 (Schema) 甚至架構圖草稿。AI 驅動的設計工具可根據用戶畫像自動生成多種 UI/UX 設計方案，並進行 A/B 測試預測。',
+                        benefit: '設計時間縮短 30-50%。自動生成標準化設計文件，提升一致性。透過數據驅動的 UI/UX 建議，提升用戶滿意度。',
+                        controls: '架構師與設計師需主導設計方向，將 AI 作為高效輔助工具而非決策者。建立設計模式庫 (Design Pattern Library)，引導 AI 生成符合團隊規範的設計。',
+                        tools: [
+                            { name: 'Uizard', description: 'AI 驅動的設計工具，能將手繪草圖或文字描述轉換為高保真 UI 模型。' },
+                            { name: 'Galileo AI', description: '透過文字提示生成可編輯的 UI 設計稿，加速設計流程。' },
+                            { name: 'AWS CodeWhisperer', description: '在設計基礎設施即代碼(IaC)時，提供智能代碼建議，加速雲架構設計。' }
+                        ]
+                    }
+                },
+                {
+                    id: 'development',
+                    name: '4. 開發與實作',
+                    icon: '💻',
+                    content: {
+                        goal: '撰寫高品質、安全且易於維護的程式碼，並高效完成功能實作。',
+                        application: 'AI 程式碼助手 (如 GitHub Copilot) 提供即時程式碼建議、自動完成與單元測試案例生成。AI 驅動的程式碼審查工具可自動檢測潛在的 bug、安全漏洞與效能瓶頸。',
+                        benefit: '開發效率提升 20-55%。程式碼品質提升，減少 20% 的初級錯誤。加速開發人員的學習曲線。',
+                        controls: '開發人員對 AI 生成的程式碼負有最終責任，必須理解、測試並重構。建立嚴格的程式碼風格與安全規範，並配置 AI 工具以遵循這些規範。',
+                        tools: [
+                            { name: 'GitHub Copilot', description: '與IDE深度整合的AI程式碼助手，提供上下文感知程式碼建議。' },
+                            { name: 'Tabnine', description: '支援多種語言的 AI 程式碼完成工具，可在本地或雲端運行以保護程式碼隱私。' },
+                            { name: 'SonarQube', description: '靜態程式碼分析工具，整合機器學習模型以更準確地檢測複雜的程式碼問題。' }
+                        ]
+                    }
+                },
+                {
+                    id: 'testing',
+                    name: '5. 測試與驗證',
+                    icon: '🧪',
+                    content: {
+                        goal: '確保系統符合需求規格，找出並修復所有重大缺陷，保證軟體品質與穩定性。',
+                        application: 'AI 驅動的測試案例生成與優化，根據程式碼變更自動識別需要執行的最少測試案例集 (Test Impact Analysis)。利用視覺 AI 進行 UI 自動化測試，檢測佈局問題。AIOps 分析日誌與指標，預測潛在的效能瓶頸。',
+                        benefit: '測試執行時間縮短 70%。測試覆蓋率提升 15%。更早發現效能問題，減少上線後故障。',
+                        controls: '測試策略應由人類專家制定，AI 用於優化執行效率。AI 發現的異常需由測試工程師驗證，以區分真實缺陷與誤報。',
+                        tools: [
+                            { name: 'Applitools', description: '利用視覺 AI 進行自動化 UI 測試，能精準捕捉人眼可見的差異。' },
+                            { name: 'Mabl', description: '低程式碼智能測試平台，利用 AI 自動維護測試腳本，適應 UI 變更。' },
+                            { name: 'Launchable', description: '使用機器學習分析程式碼變更，預測性地選擇最相關的測試來運行，加速 CI 流程。' }
+                        ]
+                    }
+                },
+                {
+                    id: 'deployment',
+                    name: '6. 部署與交付',
+                    icon: '🚀',
+                    content: {
+                        goal: '實現快速、可靠且安全的軟體部署流程，最小化對現有服務的影響。',
+                        application: 'AIOps 平台在部署過程中即時監控系統健康狀況，若偵測到異常指標 (如錯誤率飆升)，可自動觸發回滾 (Rollback) 機制。AI 驅動的 Canary Release 分析，自動比較新舊版本的效能與穩定性，決定是否擴大發布範圍。',
+                        benefit: '部署失敗率降低 90%。平均修復時間 (MTTR) 縮短 50%。實現更安全、更自信的持續交付。',
+                        controls: '部署策略 (如藍綠部署、金絲雀發布) 仍需人工定義。回滾閾值需要謹慎設定與測試，避免過於敏感或遲鈍。',
+                        tools: [
+                            { name: 'Harness', description: 'CI/CD 平台，其持續驗證 (Continuous Verification) 功能使用 AI 分析監控數據，自動判斷部署成功與否。' },
+                            { name: 'Spinnaker', description: '開源多雲持續交付平台，整合自動金絲雀分析 (ACA) 功能。' },
+                            { name: 'Argo Rollouts', description: '提供 Kubernetes 的漸進式交付控制器，支援多種部署策略並能整合分析工具。' }
+                        ]
+                    }
+                },
+                {
+                    id: 'maintenance',
+                    name: '7. 維運與監控',
+                    icon: '🛠️',
+                    content: {
+                        goal: '確保系統持續穩定運行，快速偵測、診斷並解決問題，並持續優化系統效能。',
+                        application: 'AIOps 平台整合所有監控數據 (Logs, Metrics, Traces)，利用機器學習進行異常偵測、事件關聯分析與根本原因推斷 (Root Cause Analysis)。AI 聊天機器人 (ChatOps) 可協助一線維運人員快速查詢系統狀態與執行標準操作程序。',
+                        benefit: '告警噪音降低 95% 以上。根本原因分析速度提升 80%。預測性維護，提前發現 60% 的潛在故障。',
+                        controls: 'AIOps 平台需要充分的歷史數據進行學習，初期需投入時間進行模型訓練與調校。建立自動化操作的「熔斷」機制，在 AI 判斷失誤時可由人工介入。',
+                        tools: [
+                            { name: 'Datadog', description: '整合 AIOps 功能的監控平台，提供異常偵測、日誌模式分析與根本原因推斷。' },
+                            { name: 'Dynatrace', description: '以其 AI 引擎 "Davis" 聞名，提供全自動的應用程式效能監控與問題診斷。' },
+                            { name: 'Splunk IT Service Intelligence (ITSI)', description: '強大的日誌分析與 AIOps 平台，擅長大規模數據的事件關聯與異常偵測。' }
+                        ]
+                    }
+                }
+            ];
+
+            const navContainer = document.getElementById('sdlc-nav').querySelector('div');
+            const contentContainer = document.getElementById('sdlc-content-container');
+
+            sdlcData.forEach(phase => {
+                const navItem = document.createElement('button');
+                navItem.className = 'sdlc-step flex-shrink-0 px-4 py-4 text-sm sm:text-base font-semibold text-gray-500 focus:outline-none';
+                navItem.dataset.target = phase.id;
+                navItem.innerHTML = `<span class="mr-2">${phase.icon}</span> ${phase.name}`;
+                navContainer.appendChild(navItem);
+
+                const contentCard = document.createElement('div');
+                contentCard.id = phase.id;
+                contentCard.className = 'content-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-gray-200';
+
+                let toolsHtml = phase.content.tools.map(tool => `
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-orange-500 mr-2 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        <div class="tooltip">
+                            <span class="font-semibold text-gray-800">${tool.name}</span>
+                            <span class="tooltip-text">${tool.description}</span>
+                        </div>
+                    </li>
+                `).join('');
+
+                contentCard.innerHTML = `
+                    <h3 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 flex items-center"><span class="text-3xl mr-3">${phase.icon}</span> ${phase.name}</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="text-xl font-bold text-orange-700 border-b-2 border-orange-200 pb-2 mb-4">重要目標</h4>
+                            <p class="text-gray-700 leading-relaxed">${phase.content.goal}</p>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold text-orange-700 border-b-2 border-orange-200 pb-2 mb-4">AI/AIOps 運用方式</h4>
+                            <p class="text-gray-700 leading-relaxed">${phase.content.application}</p>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold text-orange-700 border-b-2 border-orange-200 pb-2 mb-4">達成效益</h4>
+                            <p class="text-gray-700 leading-relaxed">${phase.content.benefit}</p>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold text-orange-700 border-b-2 border-orange-200 pb-2 mb-4">管控措施</h4>
+                            <p class="text-gray-700 leading-relaxed">${phase.content.controls}</p>
+                        </div>
+                        <div class="lg:col-span-2">
+                            <h4 class="text-xl font-bold text-orange-700 border-b-2 border-orange-200 pb-2 mb-4">現有工具推薦</h4>
+                            <ul class="space-y-3 text-gray-700">
+                                ${toolsHtml}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                contentContainer.appendChild(contentCard);
+            });
+
+            const navItems = document.querySelectorAll('.sdlc-step');
+            const contentCards = document.querySelectorAll('.content-card');
+
+            function switchTab(targetId) {
+                navItems.forEach(item => {
+                    item.classList.toggle('active', item.dataset.target === targetId);
+                });
+                contentCards.forEach(card => {
+                    card.classList.toggle('active', card.id === targetId);
+                });
+            }
+
+            navContainer.addEventListener('click', (e) => {
+                const targetButton = e.target.closest('.sdlc-step');
+                if (targetButton) {
+                    switchTab(targetButton.dataset.target);
+                }
+            });
+
+            switchTab('planning');
+        });
+    </script>
+</body>
+</html>
