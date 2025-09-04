@@ -3,28 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <title>Iframe Demo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; }
-    #menu { background: #333; padding: 10px; }
-    #menu button { background: #444; color: #fff; border: none; padding: 8px 12px; margin-right: 4px; cursor: pointer; }
-    #tabs { display: flex; background: #ddd; padding: 0 10px; }
-    .tab { padding: 8px 12px; background: #eee; margin-right: 4px; cursor: pointer; position: relative; }
-    .tab.active { background: #fff; border-bottom: 2px solid #fff; }
-    .tab .close { position: absolute; right: 4px; top: 4px; font-size: 12px; cursor: pointer; }
+    body { margin: 0; }
     #iframe-container { width: 100%; height: calc(100vh - 80px); }
     iframe { width: 100%; height: 100%; border: none; display: none; }
     iframe.active { display: block; }
+    #tabs .nav-link { position: relative; }
+    #tabs .close { position: absolute; right: 4px; top: 4px; font-size: 12px; cursor: pointer; }
   </style>
 </head>
-<body>
-  <div id="menu">
-    <button data-url="https://example.com">Example</button>
-    <button data-url="https://www.wikipedia.org">Wikipedia</button>
-    <button data-url="https://www.bing.com">Bing</button>
-    <button data-url="hello.html">Hello Page</button>
-    <button data-url="search.html">Search Demo</button>
-  </div>
-  <div id="tabs"></div>
+<body class="m-0">
+  <nav id="menu" class="navbar navbar-dark bg-dark p-2">
+    <button class="btn btn-secondary me-2" data-url="https://example.com">Example</button>
+    <button class="btn btn-secondary me-2" data-url="https://www.wikipedia.org">Wikipedia</button>
+    <button class="btn btn-secondary me-2" data-url="https://www.bing.com">Bing</button>
+    <button class="btn btn-secondary me-2" data-url="hello.html">Hello Page</button>
+    <button class="btn btn-secondary" data-url="search.html">Search Demo</button>
+  </nav>
+  <ul id="tabs" class="nav nav-tabs"></ul>
   <div id="iframe-container"></div>
   <script>
     const menu = document.getElementById('menu');
@@ -38,20 +35,23 @@
     });
 
     function openTab(url, title) {
-      const existing = document.querySelector(`#tabs .tab[data-url="${url}"]`);
+      const existing = document.querySelector(`#tabs .nav-link[data-url="${url}"]`);
       if (existing) {
         switchTab(url);
         return;
       }
-      const tab = document.createElement('div');
-      tab.className = 'tab';
-      tab.dataset.url = url;
-      tab.textContent = title;
+      const li = document.createElement('li');
+      li.className = 'nav-item';
+      const link = document.createElement('a');
+      link.className = 'nav-link';
+      link.dataset.url = url;
+      link.textContent = title;
       const close = document.createElement('span');
       close.textContent = '\u00d7';
       close.className = 'close';
-      tab.appendChild(close);
-      tabsDiv.appendChild(tab);
+      link.appendChild(close);
+      li.appendChild(link);
+      tabsDiv.appendChild(li);
 
       const iframe = document.createElement('iframe');
       iframe.src = url;
@@ -61,7 +61,7 @@
           const path = iframe.contentWindow.location.pathname.split('/').pop();
           const fullUrl = path + iframe.contentWindow.location.search;
           iframe.dataset.url = fullUrl;
-          tab.dataset.url = fullUrl;
+          link.dataset.url = fullUrl;
         } catch (e) {
           // Ignore cross-origin frames
         }
@@ -72,7 +72,7 @@
     }
 
     function switchTab(url) {
-      document.querySelectorAll('#tabs .tab').forEach(t => {
+      document.querySelectorAll('#tabs .nav-link').forEach(t => {
         t.classList.toggle('active', t.dataset.url === url);
       });
       document.querySelectorAll('#iframe-container iframe').forEach(f => {
@@ -81,9 +81,9 @@
     }
 
     tabsDiv.addEventListener('click', e => {
-      const tab = e.target.closest('.tab');
-      if (!tab) return;
-      const url = tab.dataset.url;
+      const link = e.target.closest('.nav-link');
+      if (!link) return;
+      const url = link.dataset.url;
       if (e.target.classList.contains('close')) {
         closeTab(url);
       } else {
@@ -92,12 +92,12 @@
     });
 
     function closeTab(url) {
-      const tab = document.querySelector(`#tabs .tab[data-url="${url}"]`);
+      const link = document.querySelector(`#tabs .nav-link[data-url="${url}"]`);
       const iframe = document.querySelector(`#iframe-container iframe[data-url="${url}"]`);
-      if (tab) tab.remove();
+      if (link) link.parentElement.remove();
       if (iframe) iframe.remove();
-      const lastTab = tabsDiv.querySelector('.tab:last-child');
-      if (lastTab) switchTab(lastTab.dataset.url);
+      const lastLink = tabsDiv.querySelector('.nav-link:last-of-type');
+      if (lastLink) switchTab(lastLink.dataset.url);
     }
 
     // Expose functions for child iframes

@@ -3,26 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <title>Search Results</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    label { display: block; margin-bottom: 8px; }
-    #result { margin-top: 20px; }
-    table { border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid #ccc; padding: 4px 8px; }
-  </style>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="container py-4">
   <h1>Search Results</h1>
-  <form method="GET" action="search-results.html">
-    <label>
-      Query:
-      <input type="text" name="q" id="query" />
-    </label>
-    <button type="submit">Search</button>
+  <form method="GET" action="search-results.html" class="mb-3">
+    <div class="mb-3">
+      <label for="query" class="form-label">Query</label>
+      <input type="text" name="q" id="query" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
   </form>
-  <div id="result"></div>
-  <button id="add">Add</button>
-  <table id="results">
+  <div id="result" class="mb-3"></div>
+  <button id="add" class="btn btn-success mb-3">Add</button>
+  <table id="results" class="table table-striped">
     <thead>
       <tr><th>ID</th><th>Name</th><th>Actions</th></tr>
     </thead>
@@ -45,8 +39,8 @@
       data.forEach(record => {
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${record.id}</td><td>${record.name}</td>` +
-          `<td><button class="edit" data-id="${record.id}">Edit</button>` +
-          `<button class="delete" data-id="${record.id}">Delete</button></td>`;
+          `<td><button class="edit btn btn-sm btn-secondary me-1" data-id="${record.id}">Edit</button>` +
+          `<button class="delete btn btn-sm btn-danger" data-id="${record.id}">Delete</button></td>`;
         tbody.appendChild(tr);
       });
     }
