@@ -59,7 +59,9 @@
       iframe.addEventListener('load', () => {
         try {
           const path = iframe.contentWindow.location.pathname.split('/').pop();
-          iframe.dataset.url = path + iframe.contentWindow.location.search;
+          const fullUrl = path + iframe.contentWindow.location.search;
+          iframe.dataset.url = fullUrl;
+          tab.dataset.url = fullUrl;
         } catch (e) {
           // Ignore cross-origin frames
         }
